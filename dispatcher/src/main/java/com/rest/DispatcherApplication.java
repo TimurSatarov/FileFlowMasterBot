@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //starter
 @SpringBootApplication
-public class DispatacherApplication {
+public class DispatcherApplication {
    public static void main(String[] args) {
-      SpringApplication.run(DispatacherApplication.class);
+      SpringApplication.run(DispatcherApplication.class);
    }
 }
