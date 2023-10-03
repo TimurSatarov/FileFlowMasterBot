@@ -1,2 +1,4 @@
-package com.rest.controller;public class UpdateController {
+package com.rest.controller;
+
+public class UpdateController {
 }
