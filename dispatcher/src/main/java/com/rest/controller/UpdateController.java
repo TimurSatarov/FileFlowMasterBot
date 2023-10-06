@@ -1,11 +1,14 @@
 package com.rest.controller;
 
 
+import com.rest.service.UpdateProducer;
 import com.rest.utils.MessageUtils;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import static com.rest.RabbitQueue.*;
 
 @Log4j
 @Component
@@ -13,8 +16,14 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 
    private TelegramBot telegramBot;
+   private final MessageUtils messageUtils;
+   private final UpdateProducer updateProducer;
 
-   private MessageUtils messageUtils;
+   public UpdateController(MessageUtils messageUtils, UpdateProducer updateProducer) {
+      this.messageUtils = messageUtils;
+      this.updateProducer = updateProducer;
+   }
+
 
    public void registerBot(TelegramBot telegramBot){
       this.telegramBot = telegramBot;
@@ -30,7 +39,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
       if(update.getMessage() != null){
          distributeMessagesByType(update);
       }else{
-         log.error("received unsupported message type " + update);
+         log.error("Unsupported message type is received: " + update);
       }
    }
 
@@ -57,12 +66,25 @@ import org.telegram.telegrambots.meta.api.objects.Update;
       telegramBot.sendAnswerMessage(sendMessage);
    }
 
-   private void processPhotoMessage(Update update) {
+   private void setFiIeIsReceivedView(Update update) {
+      var sendMessage = messageUtils.generateSendMessageWithText(update,"Process is loading......");
+      setView(sendMessage);
    }
 
+   //processes
+   private void processPhotoMessage(Update update) {
+      updateProducer.producer(PHOTO_MESSAGE_UPDATE, update);
+      setFiIeIsReceivedView(update);
+   }
+
+
    private void processDocumentMessage(Update update) {
+      updateProducer.producer(DOC_MESSAGE_UPDATE, update);
+      setFiIeIsReceivedView(update);
    }
 
    private void processTextMessages(Update update) {
+      updateProducer.producer(TEXT_MESSAGE_UPDATE, update);
+      setFiIeIsReceivedView(update);
    }
 }
