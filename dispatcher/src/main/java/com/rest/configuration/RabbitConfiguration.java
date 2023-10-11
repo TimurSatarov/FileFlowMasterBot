@@ -9,6 +9,5 @@ public class RabbitConfiguration {
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter(){
         return new Jackson2JsonMessageConverter();
-        
     }
 }
